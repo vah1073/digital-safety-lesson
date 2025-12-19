@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vlad — Аудит цифрового следа</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }
+        /* Шапка с названием соцсети Vlad */
+        .header-bar {
+            background-color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .logo {
+            display: inline-block;
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #2196F3;
+            padding: 10px 20px;
+            border: 4px solid #2196F3;     /* Синяя граница */
+            border-radius: 12px;           /* Скруглённые углы рамки */
+            background-color: white;       /* Белый фон внутри рамки */
+            box-shadow: 0 4px 8px rgba(33, 150, 243, 0.2); /* Лёгкая тень для объёма */
+        }
+
+        .header-bar h1 {
+            margin: 0;
+            color: #2196F3;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .lesson-title {
+            text-align: center;
+            margin: 10px 0 20px;
+        }
+
+        .timer {
+            font-size: 1.2em;
+            color: #F44336;
+            margin-bottom: 15px;
+        }
+
+        .profiles-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            padding: 0 20px;
+        }
+
+        .profile-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 320px;
+            max-width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .risk-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #F44336;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 15px auto;
+            display: block;
+            border: 4px solid #2196F3;
+        }
+
+        .username {
+            text-align: center;
+            font-size: 1.4em;
+            margin: 0 0 10px;
+        }
+
+        .bio {
+            padding: 0 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .posts {
+            padding: 0 15px;
+        }
+
+        .post {
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 12px;
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+
+        .post-likes {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .toggle-risks {
+            width: 100%;
+            background-color: #F44336;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 15px 0;
+        }
+
+        .risks {
+            display: none;
+            background-color: #ffebee;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 0 15px 15px;
+        }
+
+        .risks ul {
+            padding-left: 20px;
+        }
+
+        .risks li {
+            color: #D32F2F;
+            margin-bottom: 8px;
+        }
+
+        .checklist {
+            padding: 0 15px 15px;
+        }
+
+        .checklist label {
+            display: block;
+            margin: 8px 0;
+        }
+
+        .like-button {
+            width: 100%;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .like-button.selected {
+            background-color: #4CAF50;
+        }
+
+        #error-counter {
+            text-align: center;
+            font-size: 1.3em;
+            margin: 30px 0;
+            color: #2196F3;
+        }
+
+        #check-answers {
+            display: block;
+            margin: 30px auto;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        #recommendations {
+            display: none;
+            background-color: #e8f5e9;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            border-radius: 10px;
+        }
+
+        #safety-tips-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 25px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 25px;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 10px;
+        }
+
+        .close {
+            float: right;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+        }
+
+        @media (max-width: 768px) {
+            .profiles-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Шапка с названием соцсети Vlad -->
+<div class="header-bar">
+    <div class="logo">
+        Vlad
+    </div>
+</div>
+
+    <div class="lesson-title">
+        <h2>Урок: Цифровая гигиена в социальных сетях</h2>
+        <div class="timer">Время на задание: <span id="timer">10:00</span></div>
+        <button id="safety-tips-btn">Советы по безопасности</button>
+    </div>
+
+    <!-- Модальное окно с советами -->
+    <div id="safety-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Советы по цифровой безопасности</h2>
+            <ul>
+                <li>Не указывай полную дату рождения и личные данные.</li>
+                <li>Отключай геолокацию в постах.</li>
+                <li>Не сообщай, когда дома никого нет.</li>
+                <li>Настрой приватность: посты только для друзей.</li>
+                <li>Не показывай дорогие покупки и финансовые данные.</li>
+                <li>Используй сложные пароли и двухфакторную аутентификацию.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="profiles-container" id="profiles-container">
+        <!-- Профили будут добавлены через JavaScript -->
+    </div>
+
+    <div id="error-counter">Найденные ошибки: 0</div>
+    <button id="check-answers">Проверить ответы</button>
+
+    <div id="recommendations">
+        <h2>Рекомендации по безопасности</h2>
+        <p>Отлично! Вы нашли ошибки. Главное — помнить:</p>
+        <ul>
+            <li>Проверяйте настройки приватности регулярно.</li>
+            <li>Не публикуйте личную информацию (адрес, расписание, даты).</li>
+            <li>Отключайте геометки.</li>
+            <li>Не делитесь данными о финансах и паролях.</li>
+            <li>Расскажите об этом друзьям и родителям.</li>
+        </ul>
+    </div>
+
+    <footer>
+        <h2>Рефлексивные вопросы:</h2>
+        <ul>
+            <li>Какую самую опасную ошибку вы нашли?</li>
+            <li>Что бы вы изменили в своём аккаунте после этого урока?</li>
+            <li>Кому можно рассказать о рисках цифровой безопасности?</li>
+        </ul>
+        <h2>Полезные ресурсы:</h2>
+        <ul>
+            <li><a href="https://rkn.gov.ru/digital-literacy/" target="_blank">«Цифровой ликбез» от Роскомнадзора</a></li>
+            <li><a href="https://www.kaspersky.ru/resource-center/preemptive-safety/kids-online-safety" target="_blank">Советы от «Лаборатории Касперского» для подростков</a></li>
+        </ul>
+    </footer>
+
+    <script>
+        // =====================================================
+        // Здесь замените ссылки на свои фотографии
+        // =====================================================
+        const profilesData = [
+            {
+                username: "Саша Петров",
+                age: 14,
+                avatar: "man.jpg", // ← замените
+                bio: "14 лет 🎉 (06.12.2009). Учусь в 8«Б» школы № 17. Мой пёс — Джек, лучший друг! Записался в секцию бокса «Ударник» 🥊. Нижний Город.",
+                posts: [
+                    { text: "После школы всегда тут! #паркДубки", likes: 15, image: "park.jpg" },
+                    { text: "Новый комп! Мама квитанцию ещё не видела 😎 #гейминг", likes: 20, image: "comp.jpg" },
+                    { text: "Опять на тренировку, ноги болят! #бокс #Ударник", likes: 10, image: null }
+                ],
+                risks: [
+                    "Полная дата рождения и кличка собаки — это ответы на секретные вопросы для восстановления пароля",
+                    "Фото с номером дома и геометки позволяют вычислить адрес",
+                    "Регулярные метки в парке и на тренировках раскрывают расписание",
+                    "Демонстрация дорогих вещей привлекает внимание злоумышленников"
+                ]
+            },
+            {
+                username: "Катя Иванова",
+                age: 15,
+                avatar: "girl.jpg", // ← замените
+                bio: "15 лет 🎂 (12.08.2008). Учусь в 10«А» лицея №156. Люблю тусоваться в ТЦ «Мегаполис» после пар. Родной город — Нижнеозёрск. 💖",
+                posts: [
+                    { text: "Родители уехали на дачу до воскресенья! Вечеринка у меня 🎊 #родителейнет", likes: 25, image: "housr.jpg" },
+                    { text: "Наши с Сашкой ежедневные покатушки 🚲 #двор", likes: 18, image: "dvor.jpg" },
+                    { text: "Вид из окна скучный... #домашка", likes: 12, image: "vid.jpg" }
+                ],
+                risks: [
+                    "Публикация адреса и факта отсутствия родителей — риск кражи",
+                    "Геометки и расписание (ТЦ после школы) позволяют отследить перемещения",
+                    "Фото из окна помогает идентифицировать квартиру",
+                    "Указание школы и класса облегчает поиск в реальной жизни"
+                ]
+            },
+            {
+                username: "Геймер Данила",
+                age: 14,
+                avatar: "kont.jpg", // ← замените
+                bio: "Про-геймер | Аккаунт CS2: DаnTheMаn | Торгую скинами | Пишите в ТГ: @danila_trade | Мечтаю о новой видеокарте",
+                posts: [
+                    { text: "Мать отрубила интернет в 23:00! Провайдер «Дом.ru», логин в л/к mamula1975", likes: 22, image: null },
+                    { text: "Папа оставил карту на столе, купил донат на 5000р 😎 #лайфхак", likes: 30, image: "card.jpg" },
+                    { text: "Продаю аккаунт, пишите в лс", likes: 15, image: null }
+                ],
+                risks: [
+                    "Публикация логина и намёка на пароль (год рождения) от личного кабинета провайдера",
+                    "Раскрытие информации о банковской карте родителей",
+                    "Игровой никнейм и контакты для «торговли» — цель для мошенников",
+                    "Демонстрация противоправных действий (несанкционированное использование карты)"
+                ]
+            }
+        ];
+
+        // Генерация карточек профилей
+        const container = document.getElementById('profiles-container');
+        profilesData.forEach((profile, index) => {
+            const card = document.createElement('div');
+            card.className = 'profile-card';
+            card.innerHTML = `
+                <div class="risk-indicator">!</div>
+                <h2 class="username">${profile.username}, ${profile.age} лет</h2>
+                <img src="${profile.avatar}" alt="Аватар ${profile.username}" class="avatar">
+                <div class="bio"><p>${profile.bio}</p></div>
+                <div class="posts">
+                    <h3>Последние посты:</h3>
+                    ${profile.posts.map(post => `
+                        <div class="post">
+                            <div>${post.text}</div>
+                            ${post.image ? `<img src="${post.image}" alt="Фото к посту" class="post-image">` : ''}
+                            <div class="post-likes">👍 ${post.likes}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <button class="toggle-risks">Показать риски</button>
+                <div class="risks">
+                    <h3>Потенциальные риски:</h3>
+                    <ul>${profile.risks.map(r => `<li>${r}</li>`).join('')}</ul>
+                </div>
+                <div class="checklist">
+                    <h3>Что исправить?</h3>
+                    <label><input type="checkbox" class="error-check"> Удалить геометки</label>
+                    <label><input type="checkbox" class="error-check"> Скрыть дату рождения</label>
+                    <label><input type="checkbox" class="error-check"> Удалить фото с видом из окна</label>
+                    <label><input type="checkbox" class="error-check"> Настроить приватность</label>
+                </div>
+                <button class="like-button">Лайкнуть как самый опасный</button>
+            `;
+            container.appendChild(card);
+        });
+
+        // Таймер
+        let time = 600;
+        const timerEl = document.getElementById('timer');
+        const timerInterval = setInterval(() => {
+            time--;
+            const m = Math.floor(time / 60);
+            const s = time % 60;
+            timerEl.textContent = `${m}:${s < 10 ? '0' + s : s}`;
+            if (time <= 0) {
+                clearInterval(timerInterval);
+                alert('Время вышло!');
+            }
+        }, 1000);
+
+        // Показать/скрыть риски
+        document.querySelectorAll('.toggle-risks').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const risks = btn.nextElementSibling;
+                if (risks.style.display === 'block') {
+                    risks.style.display = 'none';
+                    btn.textContent = 'Показать риски';
+                } else {
+                    risks.style.display = 'block';
+                    btn.textContent = 'Скрыть риски';
+                }
+            });
+        });
+
+        // Счётчик ошибок
+        document.querySelectorAll('.error-check').forEach(cb => {
+            cb.addEventListener('change', () => {
+                const count = document.querySelectorAll('.error-check:checked').length;
+                document.getElementById('error-counter').textContent = `Найденные ошибки: ${count}`;
+            });
+        });
+
+        // Лайк самого опасного (только один)
+        document.querySelectorAll('.like-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.like-button').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+            });
+        });
+
+        // Кнопка "Проверить ответы"
+        document.getElementById('check-answers').addEventListener('click', () => {
+            document.getElementById('recommendations').style.display = 'block';
+        });
+
+        // Модальное окно советов
+        const modal = document.getElementById('safety-modal');
+        document.getElementById('safety-tips-btn').addEventListener('click', () => modal.style.display = 'block');
+        document.querySelector('.close').addEventListener('click', () => modal.style.display = 'none');
+        window.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+    </script>
+</body>
+</html>
+</html>
